@@ -33,21 +33,25 @@ public class GameTest {
 
     @Test
     public void shouldPlayRemis() {
-        Game game = new Game()
-                .move(X, 1, 1)
-                .move(O, 0, 0)
-                .move(X, 2, 0)
-                .move(O, 0, 2)
-                .move(X, 0, 1)
-                .move(O, 2, 1)
-                .move(X, 1, 0)
-                .move(O, 1, 2)
-                .move(X, 2, 2);
+        Game game = playRemis();
         assertThat(game.getBoard(), is(new Placement[][]{
                 { O, X, X },
                 { X, X, O },
                 { O, O, X }
         }));
+    }
+
+    private Game playRemis() {
+        return new Game()
+                    .move(X, 1, 1)
+                    .move(O, 0, 0)
+                    .move(X, 2, 0)
+                    .move(O, 0, 2)
+                    .move(X, 0, 1)
+                    .move(O, 2, 1)
+                    .move(X, 1, 0)
+                    .move(O, 1, 2)
+                    .move(X, 2, 2);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -84,6 +88,66 @@ public class GameTest {
         Placement[][] board = game.getBoard();
         board[1][1] = Placement.X;
         assertThat(game.getBoard(), is(EMPTY_BOARD));
+    }
+
+    @Test
+    public void shouldHaveWaitingAsInitialState() {
+        Game game = new Game();
+        assertThat(game.getState(), is(State.WAITING));
+    }
+
+    @Test
+    public void shouldHaveXMovesAsStateAfterOMoved() {
+        Game game = new Game().move(O, 0, 0);
+        assertThat(game.getState(), is(State.X_MOVES));
+    }
+
+    @Test
+    public void shouldHaveOMovesAsStateAfterXMoved() {
+        Game game = new Game().move(X, 0, 0);
+        assertThat(game.getState(), is(State.O_MOVES));
+    }
+
+    @Test
+    public void shouldHaveRemisAsStateAfterPlayingRemis() {
+        Game game = playRemis();
+        assertThat(game.getState(), is(State.REMIS));
+    }
+
+    @Test
+    public void shouldHaveXWinsAsStateAfterXWinsARow() {
+        Game game = new Game()
+                .move(X, 0, 0).move(O, 1, 1)
+                .move(X, 1, 0).move(O, 2, 1)
+                .move(X, 2, 0);
+        assertThat(game.getState(), is(State.X_WON));
+    }
+
+    @Test
+    public void shouldHaveXWinsAsStateAfterXWinsRegularDiagonal() {
+        Game game = new Game()
+                .move(X, 0, 0).move(O, 0, 1)
+                .move(X, 1, 1).move(O, 2, 1)
+                .move(X, 2, 2);
+        assertThat(game.getState(), is(State.X_WON));
+    }
+
+    @Test
+    public void shouldHaveXWinsAsStateAfterXWinsGoofyDiagonal() {
+        Game game = new Game()
+                .move(X, 0, 2).move(O, 0, 1)
+                .move(X, 1, 1).move(O, 2, 1)
+                .move(X, 2, 0);
+        assertThat(game.getState(), is(State.X_WON));
+    }
+
+    @Test
+    public void shouldHaveXWinsAsStateAfterXWinsAColumn() {
+        Game game = new Game()
+                .move(X, 0, 0).move(O, 1, 1)
+                .move(X, 0, 1).move(O, 2, 1)
+                .move(X, 0, 2);
+        assertThat(game.getState(), is(State.X_WON));
     }
 
 }
