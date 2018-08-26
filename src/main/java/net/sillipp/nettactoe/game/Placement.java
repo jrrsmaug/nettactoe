@@ -1,5 +1,5 @@
 package net.sillipp.nettactoe.game;
 
 public enum Placement {
-    EMPTY
+    EMPTY, X, O
 }
