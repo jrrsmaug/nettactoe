@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.sillipp.nettactoe.game.Placement.EMPTY;
-import static net.sillipp.nettactoe.game.Placement.O;
-import static net.sillipp.nettactoe.game.Placement.X;
 
 public class Game {
 
@@ -18,6 +16,7 @@ public class Game {
     private final int maxX;
     private final int maxY;
     private final List<Placement> board;
+    private Placement lastPlayer;
 
     public Game() {
         this(EMPTY_BOARD);
@@ -27,6 +26,7 @@ public class Game {
         this.maxX = initial.length;
         this.maxY = initial[0].length;
         this.board = toList(initial);
+        this.lastPlayer = null;
     }
 
     private List<Placement> toList(Placement[][] initial) {
@@ -56,16 +56,15 @@ public class Game {
         return (int) (y * maxY + x);
     }
 
-    public Game move(Placement placement, long x, long y) {
+    public Game move(Placement player, long x, long y) {
+        if (lastPlayer == player) {
+            throw new IllegalArgumentException("Player took double turn");
+        }
         if (board.get(coords(x, y)) != EMPTY) {
             throw new IllegalArgumentException("Field not empty");
         }
-        board.set(coords(x, y), placement);
-        long xes = count(X);
-        long oes = count(O);
-        if (Math.abs(xes - oes) == 2) {
-            throw new IllegalStateException();
-        }
+        board.set(coords(x, y), player);
+        lastPlayer = player;
         return this;
     }
 

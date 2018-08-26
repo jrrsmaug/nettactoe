@@ -66,10 +66,16 @@ public class GameTest {
         new Game().move(X, 0, 3);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void shouldNotAllowIllegalMove() {
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldNotAllowDoubleMove() {
         Game game = new Game().move(X, 1, 1);
         game.move(X, 2, 1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldNotAllowDoubleMoveOfSecondPlayer() {
+        Game game = new Game().move(X, 1, 1).move(O, 0, 0);
+        game.move(O, 2, 1);
     }
 
     @Test
